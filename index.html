@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Embedded Widget Snippet Generator</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="title-bar">
+      <h1>🔧 Embedded Widget Snippet Generator</h1>
+    </div>
+    <div class="main-content">
+      <div class="form-container">
+        <form id="recipeForm">
+          <label>
+            Product:
+            <div class="select-wrapper">
+              <select name="product">
+                <option value="">Choose a product</option>
+                <option value="all">All</option>
+                <option value="workersCompensation">
+                  Workers Compensation
+                </option>
+                <option value="generalLiability">General Liability</option>
+              </select>
+            </div>
+          </label>
+          <label>
+            Trade Selector Variant:
+            <div class="select-wrapper">
+              <select name="tradeSelectorVariant">
+                <option value="">Choose a trade selector variant</option>
+                <option value="ai">AI</option>
+                <option value="aiOverlay">AI Overlay</option>
+              </select>
+            </div>
+          </label>
+          <label>
+            <input type="checkbox" name="displayAllQuestions" />
+            Display All Questions
+          </label>
+          <label>
+            <input type="checkbox" name="tradeSelectorEnhancements" />
+            Display Trade Selector Enhancements
+          </label>
+          <label>
+            <input type="checkbox" name="redirectInNewTab" />
+            Redirect in New Tab
+          </label>
+          <label>
+            <input type="checkbox" name="redirectTo" />
+            RedirectTo
+          </label>
+          <button type="submit">✨ Generate Snippet</button>
+        </form>
+      </div>
+      <div class="results-container">
+        <h2>📋 Generated Snippet</h2>
+        <textarea
+          id="output"
+          readonly
+          placeholder="Your generated widget configuration will appear here..."
+        ></textarea>
+        <div class="button-row">
+          <button
+            class="ghost-button"
+            onclick="navigator.clipboard.writeText(document.getElementById('output').value)"
+          >
+            📋 Copy to Clipboard
+          </button>
+          <button class="link-button" onclick="resetApp()">Reset</button>
+        </div>
+      </div>
+    </div>
+    <script>
+      const resetApp = () => {
+        document.getElementById("recipeForm").reset();
+        document.getElementById("output").value = "";
+      };
+
+      document.getElementById("recipeForm").onsubmit = (e) => {
+        e.preventDefault();
+
+        const form = e.target;
+        const obj = {};
+
+        if (form.displayAllQuestions.checked) obj.displayAllQuestions = true;
+        if (form.product.value) obj.product = form.product.value;
+        if (form.redirectInNewTab.checked) obj.redirectInNewTab = true;
+        if (form.tradeSelectorEnhancements.checked)
+          obj.tradeSelectorEnhancements = true;
+        if (form.redirectTo.checked) obj.redirectTo = "pce";
+        if (form.tradeSelectorVariant.value)
+          obj.tradeSelectorVariant = form.tradeSelectorVariant.value;
+
+        document.getElementById("output").value =
+          '<div id="sb-cd" data-props="appProps">\n' +
+          '  <div style="display: grid; place-items: center; height: 300px; border-radius: 24px; box-shadow: 0 12px 24px #00000040;">\n' +
+          '    <img src="https://cd-embed.simplybusiness.com/loader.svg" alt="Loading..." />\n' +
+          "  </div>\n" +
+          "</div>\n" +
+          "<script>\n  window.appProps = () => " +
+          JSON.stringify(obj, null, 2)
+            .split("\n")
+            .map((line, index) => {
+              if (index === 0) return line;
+              return "  " + line;
+            })
+            .join("\n") +
+          ";\n<\/script>" +
+          '\n<script type="module" src="https://cd-embed.simplybusiness.com/loader.js"><\/script>';
+      };
+    </script>
+  </body>
+</html>
